@@ -9,10 +9,10 @@ _paginate: false
 ---
 ![bg](./assets/bg-main.png)
 
-# [DRAFT] Project Reactor and WebFlux
+# Reactive 101: Boosting Service Throughput with 3x Less Resources*
+**Terms and conditions apply.*
 
-
-### Introduction to Reactive Programming and WebFlux perfomance showcase
+## Spring MVC vs Spring WebFlux
 
 Vadim Axelrod
 Senior Software Engineer at EPAM
@@ -22,6 +22,17 @@ Senior Software Engineer at EPAM
 <!-- 
 Hi, everyone.
 My name is Vadim Axelrod, I'm a Java developer at EPAM, and today I'm going to show you an introduction to Reactive Programming and present Spring WebFlux - the reactive-stack web framework, as well as a comparison of Spring WebFlux perfomance over a Spring MVC.
+
+First of all, I'd like to say sorry in advance for my English.
+I'm not a native speaker, so in some situations I would take my time to think, and slow down, and speak, well, basically...
+-->
+
+---
+![bg](./assets/flash.png)
+
+<!--
+...like him.
+Okay, let's move on.
 -->
 
 ---
@@ -32,8 +43,8 @@ My name is Vadim Axelrod, I'm a Java developer at EPAM, and today I'm going to s
 - Spring WebFlux
 - Introduction to Reactive Programming
 - Reactive Streams and Project Reactor
-- JVM Threads and Linux Processes
 - WebFlux and MVC - Thread models
+- JVM Threads and Linux Processes
 - WebFlux and MVC - Perfomance test
 
 <!--
@@ -80,8 +91,6 @@ But, aside from jokes, WebFlux is better because of perfomance.
 
 WebFlux is a Spring reactive-stack web framework.
 
-It is fully non-blocking, supports Reactive Streams back pressure, and runs on such servers as Netty, Undertow, and Servlet 3.1+ containers.
-
 <!--
 Okay, what is Spring WebFlux.
 
@@ -102,19 +111,23 @@ Reactive programming is a declarative programming paradigm concerned with data s
 <!--
 Just to recap, WebFlux is based on Reactive Programming paradigm.
 Let's start with the definition of Reactive Programming.
+
+
+
+The output of each command in the pipeline is connected via a pipe to the input of the next command. That is, each command reads the previous command’s output. This connection is performed before any redirections specified by command1.
 -->
 
 ---
 ![bg](./assets/bg-secondary.png)
 
-# Resources talks
+# Resources matters
 
-Non-blocking > Blocking
+Non-blocking is better than blocking.
 
 <!--
 Why do we need this after all?
 
-Because resources talks.
+Because resources matters.
 Your application should not consume more, than you actually need, and Spring MVC paradighm can easily led you to do so.
 Resource consumption is the main advantage of Reactive Programming in general, and the main advantage of WebFlux over MVC in particular.
 
@@ -123,7 +136,9 @@ Basically it means, that you haven't got a threads in your application which doe
 -->
 
 ---
-![bg](./assets/bg-secondary.png)
+![bg](./assets/suez.jpg)
+
+<!-- _color: white -->
 
 # Blocking Can Be Wasteful
 
@@ -199,6 +214,18 @@ Just four of them.
 ---
 ![bg](./assets/bg-secondary.png)
 
+![](./assets/reactive-programming.jpg)
+
+<!--
+Reactive Programming - signals.
+
+The interaction between the publisher and the subscriber is being controlled by so-called "signals", it is a simple calling of the methods.
+
+-->
+
+---
+![bg](./assets/bg-secondary.png)
+
 # Project Reactor
 ## Producers
 
@@ -254,7 +281,8 @@ You should call them by yourself, or, for example, in case of WebFlux, it would 
 ---
 ![bg](./assets/bg-secondary.png)
 
-# Hot vs Cold
+# Project Reactor
+## Hot vs Cold
 
 - A Cold sequence starts anew for each Subscriber, including at the source of data.
 - A Hot sequence does not start from scratch for each Subscriber. Rather, late subscribers receive signals emitted after they subscribed.
@@ -268,7 +296,8 @@ A Hot sequence does not start from scratch for each Subscriber. Rather, late sub
 ---
 ![bg](./assets/bg-secondary.png)
 
-# So, what about threads?
+# Project Reactor
+## Thread model
 
 Project Reactor not enforce a concurrency model.
 
@@ -281,192 +310,28 @@ WebFlux, as a framework, would handle Threads for you.
 ---
 ![bg](./assets/bg-secondary.png)
 
-
-# Java Threads and Linux Processes
-
-Threads are expensive.
-
-Java thread creation is expensive because there is a fair bit of work involved:
-
-- A large block of memory has to be allocated and initialized for the thread stack.
-- System calls need to be made to create / register the native thread with the host OS.
-- Descriptors need to be created, initialized and added to JVM-internal data structures.
-- It is also expensive in the sense that the thread ties down resources as long as it is alive; e.g. the thread stack, any objects reachable from the stack, the JVM thread descriptors, the OS native thread descriptors.
-
-The costs of all of these things are platform specific, but they are not cheap on any Java platform I've ever come across.
-
-https://www.ibm.com/docs/en/sdk-java-technology/7.1?topic=tstt-understanding-java-native-thread-details-1
-
+# Spring MVC vs Spring WebFlux
 <!--
-Going back to the main topic - WebFlux.
-Why is it bad to keep using Spring MVC.
-Let's focus on Thread models.
+Okay, let's move to the comparison.
+In order to effectively compare perfomance of these two frameworks, we should compare their basis. Tomcat versus Netty.
 -->
 
 ---
 ![bg](./assets/bg-secondary.png)
 
-# Java Threads
-## Stack size
-
-1024 KB
-
-```
-vadim@ubuntu:~$ java -XX:+PrintFlagsFinal -version | grep ThreadStack 
-     intx ThreadStackSize                          = 1024                                   {pd product} {default}
-```
-
-I.e. any Java Thread object allocates 1 MB.
-
-https://www.demo2s.com/java/java-17-data-types-stack-and-heap-memory.html
+![width:900px](./assets/mvc-vs-webflux.png)
 
 ---
 ![bg](./assets/bg-secondary.png)
 
-# Java Threads
-## Why 1024 KB?
-
-A JVM stack, also called thread stack, is a data area in the JVM memory created for a single execution thread. The JVM stack of a thread is used by the thread to store local variables, partial results, and data for method invocations and returns.
-
-A new frame is created when a new method is invoked.
+# Spring MVC vs Spring WebFlux
+## Tomcat vs Netty
 
 <!--
-Stack Frame size?
-
-https://alvinalexander.com/scala/fp-book/recursion-jvm-stacks-stack-frames/
-
-http://www.herongyang.com/JVM/Stack-Overflow-What-Is-JVM-Stack.html
-
-
-What Is a Stack Frame? A JVM stack data area is actually organized as a stack of frames. The life cycle of a frame looks like this:
-
-A new frame is created when a new method is invoked.
-The new frame is added to the top of the stack with the execution control is transferred to the new method.
-The new frame is used during the execution of the new method to store local variables, partial results, and data for subsequent method invocations and returns.
-The new frame is removed from the top of the stack when the execution control is returned from the new method.
-
-What Is a StackOverflowError? A StackOverflowError is an exception thrown by a thread, when it's stack has no more room to add a new frame to make the next method call. You may use the JVM -Xss option to increase JVM stack size to avoid StackOverflowError exceptions.
-
-2.5.2. Java Virtual Machine Stacks
-
-Each Java Virtual Machine thread has a private Java Virtual Machine stack, created at the same time as the thread. A Java Virtual Machine stack stores frames (§2.6). A Java Virtual Machine stack is analogous to the stack of a conventional language such as C: it holds local variables and partial results, and plays a part in method invocation and return. Because the Java Virtual Machine stack is never manipulated directly except to push and pop frames, frames may be heap allocated. The memory for a Java Virtual Machine stack does not need to be contiguous.
-
-In The Java Virtual Machine Specification, First Edition, the Java Virtual Machine stack was known as the Java stack.
-
-This specification permits Java Virtual Machine stacks either to be of a fixed size or to dynamically expand and contract as required by the computation. If the Java Virtual Machine stacks are of a fixed size, the size of each Java Virtual Machine stack may be chosen independently when that stack is created.
-
-A Java Virtual Machine implementation may provide the programmer or the user control over the initial size of Java Virtual Machine stacks, as well as, in the case of dynamically expanding or contracting Java Virtual Machine stacks, control over the maximum and minimum sizes.
-
-The following exceptional conditions are associated with Java Virtual Machine stacks:
-
-If the computation in a thread requires a larger Java Virtual Machine stack than is permitted, the Java Virtual Machine throws a StackOverflowError.
-
-If Java Virtual Machine stacks can be dynamically expanded, and expansion is attempted but insufficient memory can be made available to effect the expansion, or if insufficient memory can be made available to create the initial Java Virtual Machine stack for a new thread, the Java Virtual Machine throws an OutOfMemoryError.
-
-
-https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-2.html#jvms-2.5.2
-https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-2.html#jvms-2.6
-
-
-2.6. Frames
-
-A frame is used to store data and partial results, as well as to perform dynamic linking, return values for methods, and dispatch exceptions.
-
-A new frame is created each time a method is invoked. A frame is destroyed when its method invocation completes, whether that completion is normal or abrupt (it throws an uncaught exception). Frames are allocated from the Java Virtual Machine stack (§2.5.2) of the thread creating the frame. Each frame has its own array of local variables (§2.6.1), its own operand stack (§2.6.2), and a reference to the run-time constant pool (§2.5.5) of the class of the current method.
-
-A frame may be extended with additional implementation-specific information, such as debugging information.
-
-The sizes of the local variable array and the operand stack are determined at compile-time and are supplied along with the code for the method associated with the frame (§4.7.3). Thus the size of the frame data structure depends only on the implementation of the Java Virtual Machine, and the memory for these structures can be allocated simultaneously on method invocation.
-
-Only one frame, the frame for the executing method, is active at any point in a given thread of control. This frame is referred to as the current frame, and its method is known as the current method. The class in which the current method is defined is the current class. Operations on local variables and the operand stack are typically with reference to the current frame.
-
-A frame ceases to be current if its method invokes another method or if its method completes. When a method is invoked, a new frame is created and becomes current when control transfers to the new method. On method return, the current frame passes back the result of its method invocation, if any, to the previous frame. The current frame is then discarded as the previous frame becomes the current one.
-
-Note that a frame created by a thread is local to that thread and cannot be referenced by any other thread.
-
-4.7.3. The Code Attribute
-
-The Code attribute is a variable-length attribute in the attributes table of a method_info (§4.6) structure. A Code attribute contains the Java Virtual Machine instructions and auxiliary information for a single method, instance initialization method (§2.9), or class or interface initialization method (§2.9). Every Java Virtual Machine implementation must recognize Code attributes. If the method is either native or abstract, its method_info structure must not have a Code attribute. Otherwise, its method_info structure must have exactly one Code attribute.
-
-The Code attribute has the following format:
-
-Code_attribute {
-    u2 attribute_name_index;
-    u4 attribute_length;
-    u2 max_stack;
-    u2 max_locals;
-    u4 code_length;
-    u1 code[code_length];
-    u2 exception_table_length;
-    {   u2 start_pc;
-        u2 end_pc;
-        u2 handler_pc;
-        u2 catch_type;
-    } exception_table[exception_table_length];
-    u2 attributes_count;
-    attribute_info attributes[attributes_count];
-}
-The items of the Code_attribute structure are as follows:
-
-attribute_name_index
-The value of the attribute_name_index item must be a valid index into the constant_pool table. The constant_pool entry at that index must be a CONSTANT_Utf8_info (§4.4.7) structure representing the string "Code".
-
-attribute_length
-The value of the attribute_length item indicates the length of the attribute, excluding the initial six bytes.
-
-max_stack
-The value of the max_stack item gives the maximum depth of the operand stack of this method (§2.6.2) at any point during execution of the method.
-
-max_locals
-The value of the max_locals item gives the number of local variables in the local variable array allocated upon invocation of this method (§2.6.1), including the local variables used to pass parameters to the method on its invocation.
-
-The greatest local variable index for a value of type long or double is max_locals - 2. The greatest local variable index for a value of any other type is max_locals - 1.
-
-code_length
-The value of the code_length item gives the number of bytes in the code array for this method. The value of code_length must be greater than zero; the code array must not be empty.
-
-code[]
-The code array gives the actual bytes of Java Virtual Machine code that implement the method.
-
-When the code array is read into memory on a byte-addressable machine, if the first byte of the array is aligned on a 4-byte boundary, the tableswitch and lookupswitch 32-bit offsets will be 4-byte aligned. (Refer to the descriptions of those instructions for more information on the consequences of code array alignment.)
-
-The detailed constraints on the contents of the code array are extensive and are given in a separate section (§4.9).
-
-exception_table_length
-The value of the exception_table_length item gives the number of entries in the exception_table table.
-
-exception_table[]
-Each entry in the exception_table array describes one exception handler in the code array. The order of the handlers in the exception_table array is significant (§2.10).
-
-Each exception_table entry contains the following four items:
-
-start_pc, end_pc
-The values of the two items start_pc and end_pc indicate the ranges in the code array at which the exception handler is active. The value of start_pc must be a valid index into the code array of the opcode of an instruction. The value of end_pc either must be a valid index into the code array of the opcode of an instruction or must be equal to code_length, the length of the code array. The value of start_pc must be less than the value of end_pc.
-
-The start_pc is inclusive and end_pc is exclusive; that is, the exception handler must be active while the program counter is within the interval [start_pc, end_pc).
-
-The fact that end_pc is exclusive is a historical mistake in the design of the Java Virtual Machine: if the Java Virtual Machine code for a method is exactly 65535 bytes long and ends with an instruction that is 1 byte long, then that instruction cannot be protected by an exception handler. A compiler writer can work around this bug by limiting the maximum size of the generated Java Virtual Machine code for any method, instance initialization method, or static initializer (the size of any code array) to 65534 bytes.
-
-handler_pc
-The value of the handler_pc item indicates the start of the exception handler. The value of the item must be a valid index into the code array and must be the index of the opcode of an instruction.
-
-catch_type
-If the value of the catch_type item is nonzero, it must be a valid index into the constant_pool table. The constant_pool entry at that index must be a CONSTANT_Class_info structure (§4.4.1) representing a class of exceptions that this exception handler is designated to catch. The exception handler will be called only if the thrown exception is an instance of the given class or one of its subclasses.
-
-If the value of the catch_type item is zero, this exception handler is called for all exceptions. This is used to implement finally (§3.13).
-
-attributes_count
-The value of the attributes_count item indicates the number of attributes of the Code attribute.
-
-attributes[]
-Each value of the attributes table must be an attribute structure (§4.7). A Code attribute can have any number of optional attributes associated with it.
-
-The only attributes defined by this specification as appearing in the attributes table of a Code attribute are the LineNumberTable (§4.7.12), LocalVariableTable (§4.7.13), LocalVariableTypeTable (§4.7.14), and StackMapTable (§4.7.4) attributes.
-
-If a Java Virtual Machine implementation recognizes class files whose version number is 50.0 or above, it must recognize and correctly read StackMapTable (§4.7.4) attributes found in the attributes table of a Code attribute of a class file whose version number is 50.0 or above.
-
-A Java Virtual Machine implementation is required to silently ignore any or all attributes in the attributes table of a Code attribute that it does not recognize. Attributes not defined in this specification are not allowed to affect the semantics of the class file, but only to provide additional descriptive information (§4.7.1).
+Okay, let's move to the comparison.
+In order to effectively compare perfomance of these two frameworks, we should compare their basis. Tomcat versus Netty.
 -->
+
 
 ---
 ![bg](./assets/bg-secondary.png)
@@ -489,6 +354,53 @@ Tomcat uses Thread-per-request model, which means, that
 Now let’s understand thread per request model, consider a traditional spring web application with spring mvc deployed on servlet container such as Tomcat.
 -->
 
+
+---
+![bg](./assets/bg-secondary.png)
+
+
+# Java Threads and Linux Processes
+
+[Threads are expensive.](https://www.ibm.com/docs/en/sdk-java-technology/7.1?topic=tstt-understanding-java-native-thread-details-1)
+
+![](./assets/expensive.png)
+
+<!--
+Going back to the main topic - WebFlux.
+Why is it bad to keep using Spring MVC.
+Let's focus on Thread models.
+
+Java thread creation is expensive because there is a fair bit of work involved:
+
+- A large block of memory has to be allocated and initialized for the thread stack.
+- System calls need to be made to create / register the native thread with the host OS.
+- Descriptors need to be created, initialized and added to JVM-internal data structures.
+- It is also expensive in the sense that the thread ties down resources as long as it is alive; e.g. the thread stack, any objects reachable from the stack, the JVM thread descriptors, the OS native thread descriptors.
+
+The costs of all of these things are platform specific, but they are not cheap on any Java platform I've ever come across.
+-->
+
+
+---
+![bg](./assets/bg-secondary.png)
+
+# Java Threads
+## Stack size
+
+[1024 KB](https://www.demo2s.com/java/java-17-data-types-stack-and-heap-memory.html)
+
+```
+vadim@ubuntu:~$ java -XX:+PrintFlagsFinal -version | grep ThreadStack 
+     intx ThreadStackSize                          = 1024                                   {pd product} {default}
+```
+
+I.e. any Java Thread object allocates 1 MB.
+
+<!--
+It means, that a hundred concurrent users would use a hundred threads.
+-->
+
+
 ---
 ![bg](./assets/bg-secondary.png)
 
@@ -498,8 +410,20 @@ Now let’s understand thread per request model, consider a traditional spring w
 Uses Reactive Streams API.
 `spring-boot-starter-webflux` uses Netty as an embedded reactive web server.
 
-Netty uses EventLoops. An EventLoop is powered by one single thread. The number of EventLoops to handle the request is equal to no of cores in your machine.
-Not requires new Thread.
+Netty uses EventLoops. A single EventLoop is powered by one single thread. The number of EventLoops to handle the request is equal to number of cores in your machine.
+New request would not require a new Thread.
+
+---
+![bg](./assets/bg-secondary.png)
+
+# Tomcat vs Netty - Thread Models
+
+## Spring WebFlux -> Netty
+
+Netty uses two EventLoopGroups:
+- One to just accept connections and create channels.
+- Another one to handle channels (reading requests and writing responses, and etc).
+
 
 ---
 ![bg](./assets/bg-secondary.png)
@@ -511,7 +435,9 @@ One of the big technical challenges - Netty do not use ThreadLocal.
 Slf4J relies on TheadLocal.
 Headers relies on ThreadLocal.
 
-The usual workaround for ThreadLocal usage is to move the contextual data, C, along your business data, T, in the sequence, by using (for instance) Tuple2<T, C>. This does not look good and leaks an orthogonal concern (the contextual data) into your method and Flux signatures.
+The usual workaround for ThreadLocal usage is to move the contextual data along your business data, in the sequence, by using (for instance) Tuple. 
+
+This does not look good and leaks an orthogonal concern (the contextual data) into your method and Flux signatures.
 
 <!--
 One of the big technical challenges encountered when switching from an imperative programming perspective to a reactive programming mindset lies in how you deal with threading.
@@ -519,39 +445,6 @@ Contrary to what you might be used to, in reactive programming, you can use a Th
 This arrangement is especially hard for developers that use features dependent on the threading model being more “stable,” such as ThreadLocal. As it lets you associate data with a thread, it becomes tricky to use in a reactive context. As a result, libraries that rely on ThreadLocal at least introduce new challenges when used with Reactor. At worst, they work badly or even fail. Using the MDC of Logback to store and log correlation IDs is a prime example of such a situation.
 The usual workaround for ThreadLocal usage is to move the contextual data, C, along your business data, T, in the sequence, by using (for instance) Tuple2<T, C>. This does not look good and leaks an orthogonal concern (the contextual data) into your method and Flux signatures.
 -->
-
----
-![bg](./assets/bg-secondary.png)
-
-EventLoop
-A Netty EventLoop is a loop that keeps looking for new events, e.g. incoming data from network sockets (from SocketChannel) instances). When an event occurs, the event is passed on to the appropriate event handler, for instance a ChannelHandler.
-
-SocketChannel
-A Netty SocketChannel represents a TCP connection to another computer over a network. Whether you are using Netty as client or server, all data exchanged with other computers on the network are passed through a SocketChannel instance representing the TCP connection between the computers.
-
-A SocektChannel is managed by an EventLoop, and always only by that same EventLoop. Since an EventLoop is always executed by the same thread, a SocketChannel instance is also only accessed by the same thread. Therefore you don't have to worry about synchronization when reading from a SocketChannel.
-
-http://webcache.googleusercontent.com/search?q=cache:SpCkD2jN4pEJ:tutorials.jenkov.com/netty/overview.html&cd=7&hl=ru&ct=clnk&gl=ge&client=safari
-
----
-![bg](./assets/bg-secondary.png)
-
-# How much threads?
-
-- EventLoops
-- ThreadPool
-
-## Initial
-
-Fruit | Colour | Amount | Cost
------|------|:-----:|--------:
-Banana | Yellow | 4 | £1.00
-Apple | Red | 2 | £0.60
-Orange | Orange | 10 | £2.50
-Coconut | Brown | 1 | £1.50
-
-
-## 100 concurrent users
 
 ---
 ![bg](./assets/bg-secondary.png)
