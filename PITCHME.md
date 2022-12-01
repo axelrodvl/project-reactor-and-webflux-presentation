@@ -16,6 +16,7 @@ _paginate: false
 
 Vadim Axelrod
 Senior Software Engineer at EPAM
+https://axelrod.co
 
 <style scoped>a { color: #eee; }</style>
 
@@ -43,8 +44,8 @@ Okay, let's move on.
 - Spring WebFlux
 - Introduction to Reactive Programming
 - Reactive Streams and Project Reactor
-- WebFlux and MVC - Thread models
 - JVM Threads and Linux Processes
+- WebFlux and MVC - Thread models
 - WebFlux and MVC - Perfomance test
 
 <!--
@@ -226,22 +227,58 @@ The interaction between the publisher and the subscriber is being controlled by 
 ---
 ![bg](./assets/bg-secondary.png)
 
+# java.util.concurrent.Flow
+
+```java
+@FunctionalInterface
+public static interface Publisher<T> {
+    public void subscribe(Subscriber<? super T> subscriber);
+}
+```
+
+```java
+public static interface Subscription {
+    public void request(long n);
+    public void cancel();
+    }
+```
+
+```java
+public static interface Subscriber<T> {
+    public void onSubscribe(Subscription subscription);
+    public void onNext(T item);
+    public void onError(Throwable throwable);
+    public void onComplete();
+    }
+```
+
+<!--
+Reactive Programming - signals.
+
+The interaction between the publisher and the subscriber is being controlled by so-called "signals", it is a simple calling of the methods.
+
+-->
+
+
+---
+![bg](./assets/bg-secondary.png)
+
 # Project Reactor
 ## Producers
 
 **Mono** and **Flux** implements Publisher interface.
 
 ### Mono
-```
+```java
 Mono<String> getMessage() {
-  return Mono.just("The only message from Mono");
+  return Mono.just("One value");
 }
 ```
 
 ### Flux
-```
+```java
 Flux<String> getMessages() {
-  return Flux.just("First message from Flux", "Second message from Flux");
+  return Flux.just("First", "Second");
 }
 ```
 
@@ -256,17 +293,16 @@ If your method should return a single response - use Mono, otherwise - use Flux.
 
 # Project Reactor
 ## Running Mono and Flux
-
-```
+```java
 System.out.println(getMessage().block());
 getMessages().subscribe(System.out::println);
 ```
 
 ### out
-```
-The only message from Mono
-First message from Flux
-Second message from Flux
+```java
+One value
+First
+Second
 
 Process finished with exit code 0
 ```
@@ -306,6 +342,18 @@ In Reactor, the execution model is determined by the `Scheduler`.
 `Scheduler` is similar to an `ExecutorService`, and can either have no execution context (run on current thread) or specific reusable Thread or Thread pool.
 
 WebFlux, as a framework, would handle Threads for you.
+
+---
+![bg](./assets/bg-secondary.png)
+
+# Project Reactor
+## Schedulers
+
+- `Schedulers.immediate()` - the same thread
+- `Schedulers.single()` - a single, reusable thread
+- `Schedulers.boundedElastic()` - a thread pool (10 * num(CPU_CORES))
+- `Schedulers.parallel()` - a thread pool (num(CPU_CORES))
+
 
 ---
 ![bg](./assets/bg-secondary.png)
@@ -352,6 +400,18 @@ https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/ht
 Tomcat uses Thread-per-request model, which means, that 
 
 Now let’s understand thread per request model, consider a traditional spring web application with spring mvc deployed on servlet container such as Tomcat.
+-->
+
+---
+![bg](./assets/bg-secondary.png)
+
+# Tomcat vs Netty - Thread Models
+
+## Spring MVC -> Tomcat
+![](./assets/Blocking-request-processing.png)
+
+<!--
+
 -->
 
 
@@ -424,6 +484,14 @@ Netty uses two EventLoopGroups:
 - One to just accept connections and create channels.
 - Another one to handle channels (reading requests and writing responses, and etc).
 
+---
+![bg](./assets/bg-secondary.png)
+
+# Tomcat vs Netty - Thread Models
+
+## Spring WebFlux -> Netty
+
+![](./assets/Non-blocking-request-processing.png)
 
 ---
 ![bg](./assets/bg-secondary.png)
