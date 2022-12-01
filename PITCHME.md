@@ -59,29 +59,13 @@ We will start with quick introduction of Spring WebFlux, followed by an overview
 
 ## Spring WebFlux is better than Spring MVC
 
+![](./assets/better.png)
+
 <!--
 What point?
 My point for today is pretty simple. Spring WebFlux is better than Spring MVC.
--->
 
----
-![bg](./assets/bg-secondary.png)
-
-# Why?
-
-```
-- Vim лучше, чем Emacs.
-- Чем?
-- Чем Emacs.
-```
-Russian dad joke (untranslatable, sorry)
-
-<!--
 Why, you may ask?
-Well, behing me there is untranslatable russian dad joke.
-Vim is better, than Emacs.
-Why? Because it is... Better. That's why.
-
 But, aside from jokes, WebFlux is better because of perfomance.
 -->
 
@@ -124,6 +108,8 @@ The output of each command in the pipeline is connected via a pipe to the input 
 # Resources matters
 
 Non-blocking is better than blocking.
+
+![](./assets/i-am-not-blocking.jpg)
 
 <!--
 Why do we need this after all?
@@ -181,6 +167,9 @@ You can check out this manifesto as well as The Reactive Principles on the websi
 -->
 
 ---
+![bg](./assets/project-reactor.png)
+
+---
 ![bg](./assets/bg-secondary.png)
 
 # Reactive Streams and Project Reactor
@@ -190,6 +179,7 @@ You can check out this manifesto as well as The Reactive Principles on the websi
 3. [Project Reactor](https://projectreactor.io/docs/core/release/reference/) is an implementation of the Reactive Programming paradigm.
 
 <!--
+Well, here comes the boring part.
 Reactive Programming is presented in Java by Reactive Streams as interfaces and Project Reactor as implementation.
 -->
 
@@ -318,6 +308,74 @@ You should call them by yourself, or, for example, in case of WebFlux, it would 
 ![bg](./assets/bg-secondary.png)
 
 # Project Reactor
+## Testing Mono and Flux
+```java
+StepVerifier.create(monoHello())
+    .expectNext("Hello")
+    .verifyComplete();
+```
+
+<!--
+How to use them.
+The main idea is, that nothing happens until you call subscribe().
+No framework would somehow find and run your Mono's and Flux'es for you.
+You should call them by yourself, or, for example, in case of WebFlux, it would be done by web-server.
+-->
+
+---
+![bg](./assets/bg-secondary.png)
+
+# Project Reactor
+## Map
+```java
+public Mono<String> monoWorld() {
+    return Mono.just("Hello world")
+      .map(helloWorld -> helloWorld.split(" ")[1]);
+}
+```
+
+<!--
+How to use them.
+The main idea is, that nothing happens until you call subscribe().
+No framework would somehow find and run your Mono's and Flux'es for you.
+You should call them by yourself, or, for example, in case of WebFlux, it would be done by web-server.
+-->
+
+
+
+---
+![bg](./assets/bg-secondary.png)
+
+# Project Reactor
+## Zipping
+```java
+static Mono<String> monoHello() {
+  return Mono.just("Hello");
+}
+
+static Mono<String> monoWorld() {
+  return Mono.just("world");
+}
+
+static Mono<String> monoHelloWorld() {
+  return Mono.zip(monoHello(), monoWorld())
+          .map(tuple -> tuple.getT1() + " " + tuple.getT2());
+}
+```
+
+<!--
+How to use them.
+The main idea is, that nothing happens until you call subscribe().
+No framework would somehow find and run your Mono's and Flux'es for you.
+You should call them by yourself, or, for example, in case of WebFlux, it would be done by web-server.
+-->
+
+
+
+---
+![bg](./assets/bg-secondary.png)
+
+# Project Reactor
 ## Hot vs Cold
 
 - A Cold sequence starts anew for each Subscriber, including at the source of data.
@@ -354,6 +412,20 @@ WebFlux, as a framework, would handle Threads for you.
 - `Schedulers.boundedElastic()` - a thread pool (10 * num(CPU_CORES))
 - `Schedulers.parallel()` - a thread pool (num(CPU_CORES))
 
+---
+![bg](./assets/bg-secondary.png)
+
+# Project Reactor
+## Schedulers
+
+```java
+Mono<String> monoHello = Mono.just("Hello")
+  .publishOn(Schedulers.boundedElastic());
+
+System.out.println(
+  monoHello.subscribeOn(Schedulers.boundedElastic()).block()
+);
+```
 
 ---
 ![bg](./assets/bg-secondary.png)
@@ -419,9 +491,8 @@ Now let’s understand thread per request model, consider a traditional spring w
 ![bg](./assets/bg-secondary.png)
 
 
-# Java Threads and Linux Processes
+# Threads are expensive
 
-[Threads are expensive.](https://www.ibm.com/docs/en/sdk-java-technology/7.1?topic=tstt-understanding-java-native-thread-details-1)
 
 ![](./assets/expensive.png)
 
@@ -438,6 +509,9 @@ Java thread creation is expensive because there is a fair bit of work involved:
 - It is also expensive in the sense that the thread ties down resources as long as it is alive; e.g. the thread stack, any objects reachable from the stack, the JVM thread descriptors, the OS native thread descriptors.
 
 The costs of all of these things are platform specific, but they are not cheap on any Java platform I've ever come across.
+
+
+[Threads are expensive.](https://www.ibm.com/docs/en/sdk-java-technology/7.1?topic=tstt-understanding-java-native-thread-details-1)
 -->
 
 
@@ -585,3 +659,23 @@ Total: 3
 - Throughput: 74585 req/sec (265%)
 
 ![bg](./assets/webflux-1kk-30sec.png)
+
+
+---
+![bg](./assets/fast.jpg)
+
+---
+![bg](./assets/bg-secondary.png)
+
+# Q&A
+
+![](./assets/42.gif)
+
+---
+![bg](./assets/bg-secondary.png)
+
+# Thank you!
+
+Vadim Axelrod
+Senior Software Engineer at EPAM
+https://axelrod.co
