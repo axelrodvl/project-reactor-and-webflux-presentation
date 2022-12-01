@@ -28,6 +28,13 @@ First of all, I'd like to say sorry in advance for my English.
 I'm not a native speaker, so in some situations I would take my time to think, and slow down, and speak, well, basically...
 -->
 
+
+---
+![bg](./assets/bg-secondary.png)
+
+# Link
+![w:400px](./assets/qrcode.png)
+
 ---
 ![bg](./assets/flash.png)
 
