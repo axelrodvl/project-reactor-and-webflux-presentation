@@ -342,6 +342,21 @@ You should call them by yourself, or, for example, in case of WebFlux, it would 
 -->
 
 
+---
+![bg](./assets/bg-secondary.png)
+
+# Project Reactor
+## FlatMap
+```java
+static Mono<String> monoHelloName(String name) {
+    return Mono.just("Hello " + name);
+}
+
+static Mono<String> sayHello() {
+    return Mono.just("Vadim")
+      .flatMap(this::monoHelloName);
+}
+```
 
 ---
 ![bg](./assets/bg-secondary.png)
@@ -350,16 +365,16 @@ You should call them by yourself, or, for example, in case of WebFlux, it would 
 ## Zipping
 ```java
 static Mono<String> monoHello() {
-  return Mono.just("Hello");
+    return Mono.just("Hello");
 }
 
 static Mono<String> monoWorld() {
-  return Mono.just("world");
+    return Mono.just("world");
 }
 
 static Mono<String> monoHelloWorld() {
-  return Mono.zip(monoHello(), monoWorld())
-          .map(tuple -> tuple.getT1() + " " + tuple.getT2());
+    return Mono.zip(monoHello(), monoWorld())
+        .map(tuple -> tuple.getT1() + " " + tuple.getT2());
 }
 ```
 
